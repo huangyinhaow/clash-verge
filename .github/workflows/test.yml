@@ -42,7 +42,6 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
-          target: aarch64-pc-windows-msvc
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
@@ -59,7 +58,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev webkit2gtk-4.0 libappindicator3-dev librsvg2-dev patchelf
-          rustup target add aarch64-pc-windows-msvc
 
       - name: Get yarn cache dir path
         id: yarn-cache-dir-path
@@ -77,7 +75,6 @@ jobs:
       - name: Yarn install and check
         run: |
           yarn install --network-timeout 1000000
-          npm i -g tauri
           yarn run check
 
       - name: Setup MSVC
@@ -86,7 +83,10 @@ jobs:
           arch: amd64_arm64
           
       - name: Tauri build
-        run: tauri build --target aarch64-pc-windows-msvc
+        run: |
+          rustup target add aarch64-pc-windows-msvc
+          rustup target add i686-pc-windows-msvc
+          yarn build -- --target aarch64-pc-windows-msvc
         
       - name: Upload
         uses: actions/upload-artifact@v3.1.2
